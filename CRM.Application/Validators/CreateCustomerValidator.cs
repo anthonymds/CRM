@@ -3,8 +3,7 @@ using FluentValidation;
 
 namespace CRM.Application.Validators;
 
-public class CreateCustomerValidator
-    : AbstractValidator<CreateCustomerRequest>
+public class CreateCustomerValidator : AbstractValidator<CreateCustomerRequest>
 {
     public CreateCustomerValidator()
     {
