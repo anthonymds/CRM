@@ -83,10 +83,11 @@ public class CustomerService : ICustomerService
         return Result<bool>.Success(true);
 
     }
-    public async Task<List<Customer>> GetByStatusAsync(CustomerStatus status)
+    public async Task<Result<List<CustomerResponse>>> GetByStatusAsync(CustomerStatus status)
     {
         var customers = await _customerRepository.GetByStatusAsync(status);
 
-        return _mapper.Map<List<Customer>>(customers);
+        var response = _mapper.Map<List<CustomerResponse>>(customers);
+        return Result<List<CustomerResponse>>.Success(response);
     }
 }
