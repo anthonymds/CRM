@@ -5,10 +5,10 @@ namespace CRM.Application.Interfaces;
 
 public interface ICustomerService
 {
-    Task<Result<CustomerResponse>> CreateAsync(CreateCustomerRequest request);
-    Task<Result<List<CustomerResponse>>> GetAllAsync();
-    Task<Result<CustomerResponse>> GetByIdAsync(Guid id);
-    Task<Result<CustomerResponse>> UpdateAsync(Guid id, UpdateCustomerRequest request);
-    Task<Result<bool>> DeleteAsync(Guid id);
-    Task<Result<List<CustomerResponse>>> GetByStatusAsync(CustomerStatus status);
+    Task<Result<CustomerResponse>> CreateAsync(CreateCustomerRequest request, CancellationToken cancellationToken);
+    Task<Result<List<CustomerResponse>>> GetAllAsync(CancellationToken cancellationToken);
+    Task<Result<CustomerResponse>> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<Result<CustomerResponse>> UpdateAsync(Guid id, UpdateCustomerRequest request, CancellationToken cancellationToken);
+    Task<Result<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken);
+    Task<Result<List<CustomerResponse>>> GetByStatusAsync(CustomerStatus status, CancellationToken cancellationToken);
 }

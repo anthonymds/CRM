@@ -15,40 +15,40 @@ public class CustomerRepository : ICustomerRepository
         _context = context;
     }
 
-    public async Task AddAsync(Customer customer)
+    public async Task AddAsync(Customer customer, CancellationToken cancellationToken)
     {
-        await _context.Customers.AddAsync(customer);
+        await _context.Customers.AddAsync(customer, cancellationToken);
         await _context.SaveChangesAsync();
     }
 
 
-    public async Task<Customer?> GetByIdAsync(Guid id)
+    public async Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _context.Customers.FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.Customers.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
     }
 
-    public async Task<List<Customer>> GetAllAsync()
+    public async Task<List<Customer>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return await _context.Customers.ToListAsync();
+        return await _context.Customers.ToListAsync(cancellationToken);
     }
 
-    public async Task UpdateAsync(Customer customer)
+    public async Task UpdateAsync(Customer customer, CancellationToken cancellationToken)
     {
         _context.Customers.Update(customer);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> ExistCustomerByDocument(string customerDocument)
+    public async Task<bool> ExistCustomerByDocument(string customerDocument, CancellationToken cancellationToken)
     {
-        var result = await _context.Customers.FirstOrDefaultAsync(x => x.Document == customerDocument);
+        var result = await _context.Customers.FirstOrDefaultAsync(x => x.Document == customerDocument, cancellationToken);
 
         if (result == null)
             return false;
 
         return true;
     }
-    public async Task<List<Customer>> GetByStatusAsync(CustomerStatus status)
+    public async Task<List<Customer>> GetByStatusAsync(CustomerStatus status, CancellationToken cancellationToken)
     {
-        return await _context.Customers.Where(x => x.Status == status).ToListAsync();
+        return await _context.Customers.Where(x => x.Status == status).ToListAsync(cancellationToken);
     }
 }

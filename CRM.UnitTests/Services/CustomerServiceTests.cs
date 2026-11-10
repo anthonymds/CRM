@@ -47,7 +47,7 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.ExistCustomerByDocument(request.Document))
+            .Setup(x => x.ExistCustomerByDocument(request.Document, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         _mapperMock
@@ -59,7 +59,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         // Act
-        var result = await _service.CreateAsync(request);
+        var result = await _service.CreateAsync(request, It.IsAny<CancellationToken>());
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -70,7 +70,7 @@ public class CustomerServiceTests
             result.Data.Name);
 
         _repositoryMock.Verify(
-            x => x.AddAsync(customer),
+            x => x.AddAsync(customer, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -97,7 +97,7 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.ExistCustomerByDocument(request.Document))
+            .Setup(x => x.ExistCustomerByDocument(request.Document, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true);
 
         _mapperMock
@@ -109,7 +109,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         // Act
-        var result = await _service.CreateAsync(request);
+        var result = await _service.CreateAsync(request, It.IsAny<CancellationToken>());
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -119,7 +119,7 @@ public class CustomerServiceTests
         result.Error);
 
         _repositoryMock.Verify(
-        x => x.AddAsync(It.IsAny<Customer>()),
+        x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
         Times.Never);
     }
 
@@ -146,7 +146,7 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.ExistCustomerByDocument(request.Document))
+            .Setup(x => x.ExistCustomerByDocument(request.Document!, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         _mapperMock
@@ -158,7 +158,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         // Act
-        var result = await _service.CreateAsync(request);
+        var result = await _service.CreateAsync(request, It.IsAny<CancellationToken>());
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -168,7 +168,7 @@ public class CustomerServiceTests
         result.Error);
 
         _repositoryMock.Verify(
-        x => x.AddAsync(It.IsAny<Customer>()),
+        x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
         Times.Never);
     }
 
@@ -197,7 +197,7 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.GetByIdAsync(customerId))
+            .Setup(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(customer);
 
         _mapperMock
@@ -205,7 +205,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         // Act
-        var result = await _service.GetByIdAsync(customerId);
+        var result = await _service.GetByIdAsync(customerId, It.IsAny<CancellationToken>());
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -215,7 +215,7 @@ public class CustomerServiceTests
         Assert.Equal(customer.Email, result.Data.Email);
 
         _repositoryMock.Verify(
-            x => x.GetByIdAsync(customerId),
+            x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mapperMock.Verify(
@@ -230,11 +230,11 @@ public class CustomerServiceTests
         var customerId = Guid.NewGuid();
 
         _repositoryMock
-            .Setup(x => x.GetByIdAsync(customerId))
+            .Setup(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Customer?)null);
 
         // Act
-        var result = await _service.GetByIdAsync(customerId);
+        var result = await _service.GetByIdAsync(customerId, It.IsAny<CancellationToken>());
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -245,7 +245,7 @@ public class CustomerServiceTests
         result.Error);
 
         _repositoryMock.Verify(
-            x => x.GetByIdAsync(customerId),
+            x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mapperMock.Verify(
@@ -333,7 +333,7 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.GetByStatusAsync(customerStatusActive))
+            .Setup(x => x.GetByStatusAsync(customerStatusActive, It.IsAny<CancellationToken>()))
             .ReturnsAsync(customersList);
 
         _mapperMock
@@ -341,7 +341,7 @@ public class CustomerServiceTests
             .Returns(responses);
 
         //act
-        var result = await _service.GetByStatusAsync(customerStatusActive);
+        var result = await _service.GetByStatusAsync(customerStatusActive, It.IsAny<CancellationToken>());
 
         // Assert
         Assert.NotNull(result.Data!.FirstOrDefault());
@@ -360,7 +360,7 @@ public class CustomerServiceTests
             result.Data![2].Id);
 
         _repositoryMock.Verify(
-            x => x.GetByStatusAsync(customerStatusActive),
+            x => x.GetByStatusAsync(customerStatusActive, It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mapperMock.Verify(
@@ -445,7 +445,7 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.GetAllAsync())
+            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
             .ReturnsAsync(customersList);
 
         _mapperMock
@@ -453,7 +453,7 @@ public class CustomerServiceTests
             .Returns(responses);
 
         //act
-        var result = await _service.GetAllAsync();
+        var result = await _service.GetAllAsync(It.IsAny<CancellationToken>());
 
         // Assert
         Assert.NotNull(result.Data!.First());
@@ -472,7 +472,7 @@ public class CustomerServiceTests
             result.Data![2].Id);
 
         _repositoryMock.Verify(
-            x => x.GetAllAsync(),
+            x => x.GetAllAsync(It.IsAny<CancellationToken>()),
             Times.Once);
 
         _mapperMock.Verify(
@@ -518,10 +518,10 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.GetByIdAsync(customer.Id))
+            .Setup(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(customer);
         _repositoryMock
-            .Setup(x => x.UpdateAsync(customer))
+            .Setup(x => x.UpdateAsync(customer, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _mapperMock
@@ -529,7 +529,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         //act
-        var result = await _service.UpdateAsync(customer.Id, customerUpdated);
+        var result = await _service.UpdateAsync(customer.Id, customerUpdated, It.IsAny<CancellationToken>());
 
         //assert
         Assert.True(result.IsSuccess);
@@ -546,11 +546,11 @@ public class CustomerServiceTests
             customerUpdated.Email);
 
         _repositoryMock.Verify(
-           x => x.GetByIdAsync(customer.Id),
+           x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()),
            Times.Once);
 
         _repositoryMock.Verify(
-            x => x.UpdateAsync(customer),
+            x => x.UpdateAsync(customer, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -592,11 +592,11 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.GetByIdAsync(customer.Id))
+            .Setup(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Customer?)null);
 
         _repositoryMock
-            .Setup(x => x.UpdateAsync(customer))
+            .Setup(x => x.UpdateAsync(customer, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _mapperMock
@@ -604,7 +604,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         //act
-        var result = await _service.UpdateAsync(customer.Id, customerUpdated);
+        var result = await _service.UpdateAsync(customer.Id, customerUpdated, It.IsAny<CancellationToken>());
 
         //assert
         Assert.False(result.IsSuccess);
@@ -612,7 +612,7 @@ public class CustomerServiceTests
         Assert.Equal("Customer not found or does not exist", result.Error);
 
         _repositoryMock.Verify(
-           x => x.GetByIdAsync(customer.Id),
+           x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()),
            Times.Once);
 
     }
@@ -648,11 +648,12 @@ public class CustomerServiceTests
         };
 
         _repositoryMock
-            .Setup(x => x.GetByIdAsync(customer.Id))
+            .Setup(x => x.GetByIdAsync(customer.Id,
+            It.IsAny<CancellationToken>()))
             .ReturnsAsync(customer);
 
         _repositoryMock
-            .Setup(x => x.UpdateAsync(customer))
+            .Setup(x => x.UpdateAsync(customer, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _mapperMock
@@ -660,7 +661,7 @@ public class CustomerServiceTests
             .Returns(response);
 
         //act
-        var result = await _service.DeleteAsync(customer.Id);
+        var result = await _service.DeleteAsync(customer.Id, It.IsAny<CancellationToken>());
 
         //assert
         Assert.True(result.IsSuccess);
@@ -670,11 +671,11 @@ public class CustomerServiceTests
             customer.Status);
 
         _repositoryMock.Verify(
-           x => x.GetByIdAsync(customer.Id),
+           x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()),
            Times.Once);
 
         _repositoryMock.Verify(
-            x => x.UpdateAsync(customer),
+            x => x.UpdateAsync(customer, It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

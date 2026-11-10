@@ -4,10 +4,10 @@ namespace CRM.Application.Interfaces;
 
 public interface ICustomerRepository
 {
-    Task AddAsync(Customer customer);
-    Task<Customer?> GetByIdAsync(Guid id);
-    Task<List<Customer>> GetAllAsync();
-    Task UpdateAsync(Customer customer);
-    Task<bool> ExistCustomerByDocument(string customerDocument);
-    Task<List<Customer>> GetByStatusAsync(CustomerStatus status);
+    Task AddAsync(Customer customer, CancellationToken cancellationToken);
+    Task<Customer?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    Task<List<Customer>> GetAllAsync(CancellationToken cancellationToken);
+    Task UpdateAsync(Customer customer, CancellationToken cancellationToken);
+    Task<bool> ExistCustomerByDocument(string customerDocument, CancellationToken cancellationToken);
+    Task<List<Customer>> GetByStatusAsync(CustomerStatus status, CancellationToken cancellationToken);
 }

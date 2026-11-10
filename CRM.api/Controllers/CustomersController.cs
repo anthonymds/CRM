@@ -28,6 +28,7 @@ public class CustomersController : ControllerBase
     ///<param name="request">
     ///customer information: name,document,type, email, phone
     ///</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>
     /// Created customer.
     /// </returns>
@@ -40,9 +41,9 @@ public class CustomersController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Create(CreateCustomerRequest request)
+    public async Task<IActionResult> Create(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var result = await _service.CreateAsync(request);
+        var result = await _service.CreateAsync(request, cancellationToken);
 
         if (!result.IsSuccess)
             return BadRequest(new { message = result.Error });
@@ -56,21 +57,22 @@ public class CustomersController : ControllerBase
     [HttpGet]
     [ProducesResponseType(typeof(List<CustomerResponse>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var result = await _service.GetAllAsync();
+        var result = await _service.GetAllAsync(cancellationToken);
         return Ok(result.Data);
     }
     /// <summary>
     /// Returns customer with the id.
     /// </summary>
     /// <param name="id">Id of the costumer</param>
+    /// <param name="cancellationToken"></param>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _service.GetByIdAsync(id);
+        var result = await _service.GetByIdAsync(id, cancellationToken);
         if (!result.IsSuccess)
             return BadRequest(new { message = result.Error });
 
@@ -82,12 +84,13 @@ public class CustomersController : ControllerBase
     /// </summary>
     /// <param name="id">Id of the costumer</param>
     /// <param name="request">Data to be updated: name, phone, email</param>
+    /// <param name="cancellationToken"></param>
     [ProducesResponseType(typeof(CustomerResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, UpdateCustomerRequest request)
+    public async Task<IActionResult> Update(Guid id, UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var result = await _service.UpdateAsync(id, request);
+        var result = await _service.UpdateAsync(id, request, cancellationToken);
         if (!result.IsSuccess)
             return BadRequest(new { message = result.Error });
 
@@ -98,14 +101,15 @@ public class CustomersController : ControllerBase
     /// Turns a customer status to inactive.
     /// </summary>
     /// <param name="id">Costumer's Id.</param>
+    /// <param name="cancellationToken"></param>
     /// <response code="204">Customer successfully deactivated.</response>
     /// <response code="400">Customer not found or does not exist</response>
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _service.DeleteAsync(id);
+        var result = await _service.DeleteAsync(id, cancellationToken);
         if (!result.IsSuccess)
         {
             return BadRequest(new
@@ -121,11 +125,12 @@ public class CustomersController : ControllerBase
     /// Returns customers according to the reported status.
     /// </summary>
     /// <param name="status">Status of customers who will be returned.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>List of clients with the specified status.</returns>
     [HttpGet("status/{status}")]
-    public async Task<IActionResult> GetByStatus(CustomerStatus status)
+    public async Task<IActionResult> GetByStatus(CustomerStatus status, CancellationToken cancellationToken)
     {
-        var result = await _service.GetByStatusAsync(status);
+        var result = await _service.GetByStatusAsync(status, cancellationToken);
         return Ok(result);
     }
 }
