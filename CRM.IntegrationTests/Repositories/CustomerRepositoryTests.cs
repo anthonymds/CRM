@@ -27,7 +27,7 @@ public class CustomerRepositoryTests : IClassFixture<DatabaseFixture>
             Name = "Integration Test",
             Email = "integration@test.com",
             Phone = "79999999999",
-            Document = "127384023789",
+            Document = "81818181818181",
             CreatedAt = DateTime.UtcNow,
             Type = CustomerType.Individual,
             Status = CustomerStatus.Active
@@ -78,8 +78,9 @@ public class CustomerRepositoryTests : IClassFixture<DatabaseFixture>
 
         var repository = new CustomerRepository(_fixture.Context);
 
-        // already been aded to DB
-        //await repository.AddAsync(customer, cancellationToken);
+        var alreadyExist = await repository.ExistCustomerByDocument(customer.Document, cancellationToken);
+        if (alreadyExist == false)
+            await repository.AddAsync(customer, cancellationToken);
 
         // Act
         var result = await repository.GetByIdAsync(customer.Id, cancellationToken);
@@ -165,10 +166,18 @@ public class CustomerRepositoryTests : IClassFixture<DatabaseFixture>
             Status = CustomerStatus.Active
         };
 
-        // already been aded to DB
-        //await repository.AddAsync(customer, cancellationToken);
-        //await repository.AddAsync(customer2, cancellationToken);
-        //await repository.AddAsync(customer3, cancellationToken);
+        var alreadyExist = await repository.ExistCustomerByDocument(customer.Document, cancellationToken);
+        if (alreadyExist == false)
+            await repository.AddAsync(customer, cancellationToken);
+
+        var alreadyExist2 = await repository.ExistCustomerByDocument(customer2.Document, cancellationToken);
+        if (alreadyExist2 == false)
+            await repository.AddAsync(customer2, cancellationToken);
+
+        var alreadyExist3 = await repository.ExistCustomerByDocument(customer3.Document, cancellationToken);
+        if (alreadyExist3 == false)
+            await repository.AddAsync(customer3, cancellationToken);
+
         //act
         var result = await repository.GetByStatusAsync(customerStatusActive, cancellationToken);
 
@@ -183,5 +192,59 @@ public class CustomerRepositoryTests : IClassFixture<DatabaseFixture>
         Assert.Contains(result,
             x => x.Id == customer3.Id);
 
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ShouldChangeCustomerFields()
+    {
+        //arrange
+
+        var cancellationToken = CancellationToken.None;
+        var repository = new CustomerRepository(_fixture.Context);
+
+        var customer = new Customer
+        {
+            Id = Guid.NewGuid(),
+            Name = "teste 3",
+            Email = "teste321@whitehouse.com",
+            Phone = "7999999999",
+            CreatedAt = DateTime.UtcNow,
+            Document = "789789789789",
+            UpdatedAt = DateTime.UtcNow,
+            Type = CustomerType.Individual,
+            Status = CustomerStatus.Active
+        };
+
+        //act
+        var alreadyExist = await repository.ExistCustomerByDocument(customer.Document, cancellationToken);
+        if (alreadyExist == false)
+            await repository.AddAsync(customer, cancellationToken);
+        var response = await repository.GetByIdAsync(customer.Id, cancellationToken);
+
+        response.Name = "update test integration";
+        response.Status = CustomerStatus.Inactive;
+        response.UpdatedAt = DateTime.UtcNow;
+
+        await repository.UpdateAsync(response, cancellationToken);
+        var result = await repository.GetByIdAsync(customer.Id, cancellationToken);
+
+        //assert
+        Assert.NotNull(result);
+
+        Assert.Equal(
+            response.Id,
+            result.Id);
+
+        Assert.Equal(
+            response.Name,
+            result.Name);
+
+        Assert.Equal(
+            response.Email,
+            result.Email);
+
+        Assert.Equal(
+            response.Document,
+            result.Document);
     }
 }
