@@ -9,8 +9,7 @@ namespace CRM.Infrastructure.Repositories;
 public class CustomerRepository : ICustomerRepository
 {
     private readonly CrmDbContext _context;
-    public CustomerRepository(
-        CrmDbContext context)
+    public CustomerRepository(CrmDbContext context)
     {
         _context = context;
     }

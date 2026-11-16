@@ -9,32 +9,32 @@ public class CreateCustomerValidator : AbstractValidator<CreateCustomerRequest>
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Nome é obrigatório.")
+            .WithMessage("Name is required.")
             .MaximumLength(200)
-            .WithMessage("Nome deve possuir no máximo 200 caracteres.");
+            .WithMessage("Name must not exceed 200 characters.");
 
 
         RuleFor(x => x.Email)
             .NotEmpty()
-            .WithMessage("Email é obrigatório.")
+            .MaximumLength(200)
+            .WithMessage("Email address is required")
             .EmailAddress()
-            .WithMessage("Email informado é inválido.");
+            .WithMessage("Email address is invalid");
 
 
         RuleFor(x => x.Document)
             .NotEmpty()
-            .WithMessage("Documento é obrigatório.")
+            .WithMessage("Document is required.")
             .MaximumLength(20)
-            .WithMessage("Documento deve possuir no máximo 20 caracteres.");
+            .WithMessage("Document must not exceed 20 characters.");
 
 
         RuleFor(x => x.Phone)
             .MaximumLength(20)
-            .WithMessage("Telefone deve possuir no máximo 20 caracteres.");
-
+            .WithMessage("Phone must not exceed 20 characters.");
 
         RuleFor(x => x.Type)
             .IsInEnum()
-            .WithMessage("Tipo de cliente inválido.");
+            .WithMessage("Type invalid.");
     }
 }

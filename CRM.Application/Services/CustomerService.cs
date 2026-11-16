@@ -65,8 +65,8 @@ public class CustomerService : ICustomerService
         customer.UpdatedAt = DateTime.UtcNow;
 
         await _customerRepository.UpdateAsync(customer, cancellationToken);
-
-        return Result<CustomerResponse>.Success(_mapper.Map<CustomerResponse>(customer));
+        var response = _mapper.Map<CustomerResponse>(customer);
+        return Result<CustomerResponse>.Success(response);
     }
 
     public async Task<Result<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken)

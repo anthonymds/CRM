@@ -12,6 +12,7 @@ public static class DependencyInjection
         services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(DependencyInjection).Assembly); });
         services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
         services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<ILeadService, LeadService>();
         return services;
     }
 }
