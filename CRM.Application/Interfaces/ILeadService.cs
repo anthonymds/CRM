@@ -12,4 +12,5 @@ public interface ILeadService
     Task<Result<LeadResponse>> UpdateAsync(Guid id, UpdateLeadRequest request, CancellationToken cancellationToken);
     Task<Result<bool>> DeleteAsync(Guid id, CancellationToken cancellationToken);
     Task<Result<List<LeadResponse>>> GetByStatusAsync(LeadStatus status, CancellationToken cancellationToken);
+    Task<Result<LeadResponse>> ConvertAsync(Guid id, ConvertLeadRequest convertLeadRequest, CancellationToken cancellationToken);
 }

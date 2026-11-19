@@ -11,10 +11,47 @@ public class LeadService : ILeadService
 {
     private readonly IMapper _mapper;
     private readonly ILeadRepository _leadRepository;
-    public LeadService(IMapper mapper, ILeadRepository leadRepository)
+    private readonly ICustomerService _customerService;
+    public LeadService(IMapper mapper, ILeadRepository leadRepository, ICustomerService customerService)
     {
         _mapper = mapper;
         _leadRepository = leadRepository;
+        _customerService = customerService;
+    }
+
+    public async Task<Result<LeadResponse>> ConvertAsync(Guid id, ConvertLeadRequest request, CancellationToken cancellationToken)
+    {
+        var lead = await _leadRepository.GetByIdAsync(id, cancellationToken);
+
+        if (lead == null)
+            return Result<LeadResponse>.Failure("Lead not found or does not exist");
+
+        if (lead.Status == LeadStatus.Lost || lead.Status == LeadStatus.Converted)
+            return Result<LeadResponse>.Failure("Lead already lost or already converted");
+
+        var customerRequest = new CreateCustomerRequest
+        {
+            Name = lead.Name,
+            Document = lead.Document,
+            Email = lead.Email,
+            Phone = lead.Phone,
+            Type = request.CustomerType
+        };
+
+
+        var leadConverted = await _customerService.CreateAsync(customerRequest, cancellationToken);
+        if (!leadConverted.IsSuccess)
+            return Result<LeadResponse>.Failure(leadConverted.Error!);
+
+        lead.Status = LeadStatus.Converted;
+        lead.LastUpdatedAt = DateTime.UtcNow;
+        lead.CustomerId = leadConverted.Data!.Id;
+
+        await _leadRepository.UpdateAsync(lead, cancellationToken);
+
+        var response = _mapper.Map<LeadResponse>(lead);
+
+        return Result<LeadResponse>.Success(response);
     }
 
     public async Task<Result<LeadResponse>> CreateAsync(CreateLeadRequest request, CancellationToken cancellationToken)

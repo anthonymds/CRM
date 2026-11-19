@@ -134,4 +134,18 @@ public class LeadController : ControllerBase
         var result = await _service.GetByStatusAsync(status, cancellationToken);
         return Ok(result);
     }
+
+    /// <summary>
+    /// Converts the lead to customer and updates his status to "converted".
+    /// </summary>
+    /// <param name="id">Id of Lead who will be converted to customer.</param>
+    /// <param name="request">the type of customer : individual or company </param>
+    /// <param name="cancellationToken"></param>
+    /// <returns>List of clients with the specified status.</returns>
+    [HttpPost("{id}/convert")]
+    public async Task<IActionResult> ConvertLeadToCustomer(Guid id, [FromBody] ConvertLeadRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _service.ConvertAsync(id, request, cancellationToken);
+        return Ok(result);
+    }
 }
